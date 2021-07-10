@@ -1,0 +1,8 @@
+.DS_Store
+.nova
+node_modules
+*.bak
+/Elm.novaextension/Scripts
+logs/
+coverage/
+*.log
