@@ -10,24 +10,12 @@
     "bugs": "https://github.com/sciencefidelity/Nova-Elm/issues",
     "homepage": "https://mattcook.dev",
     "keywords": ["elm"],
-
-    "main": "main.dist.js",
-
     "activationEvents": [
         "onLanguage:elm",
         "onWorkspaceContains:elm.json"
     ],
     "entitlements": {
         "process": true,
-        "filesystem": "readwrite"
-    },
-
-    "config": [
-        {
-            "key": "example.language-server-path",
-            "title": "Language Server Path",
-            "type": "path",
-            "placeholder": "/usr/local/bin/example"
-        }
-    ]
+        "filesystem": "readonly"
+    }
 }
