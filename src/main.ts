@@ -1,3 +1,5 @@
+import { cleanPath } from "nova-extension-utils";
+
 let client: LanguageClient | null = null;
 
 async function makeFileExecutable(file: string) {
@@ -48,6 +50,9 @@ async function asyncActivate() {
     };
   }
 
+  const normalizedPath = !!nova.workspace.path && cleanPath(nova.workspace.path);
+  const syntaxes = ["elm"];
+
   client = new LanguageClient(
     "sciencefidelity.elm",
     "Elm Language Server",
@@ -55,15 +60,11 @@ async function asyncActivate() {
       type: "stdio",
       ...serviceArgs,
       env: {
-        WORKSPACE_DIR: nova.workspace.path ?? "",
+        WORKSPACE_DIR: `${normalizedPath}`
       },
     },
     {
-      // initializationOptions: {
-      //   "enable": true,
-      //   "lint": true
-      // },
-      syntaxes: ["elm"]
+      syntaxes
     }
   );
 
