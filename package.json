@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "description": "Elm language definition for Nova",
   "main": "",
-  "private": true,
   "scripts": {
-    "build": "rollup -c rollup.config.main.js && rm -rf Dart.novaextension/node_modules",
+    "build": "rollup -c rollup.config.main.js && rm -rf Elm.novaextension/node_modules",
     "test": "jest",
     "watch": "onchange -i \"src/**\" \"rollup.*.js\" -- npm run build"
   },
   "repository": "https://github.com/sciencefidelity/Nova-Elm.git",
   "author": "Matt Cook",
   "license": "MIT",
+  "private": true,
   "bugs": {
-    "url": "https://github.com/sciencefidelity/Nova-Dart/issues"
+    "url": "https://github.com/sciencefidelity/Nova-Elm/issues"
   },
-  "homepage": "https://github.com/sciencefidelity/Nova-Dart",
+  "homepage": "https://github.com/sciencefidelity/Nova-Elm",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
