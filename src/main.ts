@@ -1,6 +1,9 @@
 import { cleanPath } from "nova-extension-utils";
 
+nova.commands.register("sciencefidelity.dart.reload", reload);
+
 let client: LanguageClient | null = null;
+const compositeDisposable = new CompositeDisposable();
 
 async function makeFileExecutable(file: string) {
   return new Promise<void>((resolve, reject) => {
@@ -16,6 +19,22 @@ async function makeFileExecutable(file: string) {
     });
     process.start();
   });
+}
+
+nova.config.onDidChange("sciencefidelity.elm.config.enableAnalyzer",
+  async function (current) {
+    if (current) {
+      activate();
+    } else {
+      deactivate()
+    }
+  }
+);
+
+async function reload() {
+  deactivate();
+  console.log("reloading...");
+  await asyncActivate();
 }
 
 async function asyncActivate() {
@@ -50,7 +69,12 @@ async function asyncActivate() {
     };
   }
 
-  const normalizedPath = !!nova.workspace.path && cleanPath(nova.workspace.path);
+  let normalizedPath;
+  if (nova.inDevMode() && nova.workspace.path) {
+    normalizedPath = `${cleanPath(nova.workspace.path)}/test-workspace`;
+  } else if (nova.workspace.path) {
+    normalizedPath = cleanPath(nova.workspace.path)
+  }
   const syntaxes = ["elm"];
 
   client = new LanguageClient(
@@ -60,7 +84,7 @@ async function asyncActivate() {
       type: "stdio",
       ...serviceArgs,
       env: {
-        WORKSPACE_DIR: `${normalizedPath}`
+        WORKSPACE_DIR: normalizedPath || ""
       },
     },
     {
@@ -68,28 +92,56 @@ async function asyncActivate() {
     }
   );
 
+  compositeDisposable.add(
+    client.onDidStop((err) => {
+
+      let message = "Elm Language Server stopped unexpectedly";
+      if (err) {
+        message += `:\n\n${err.toString()}`;
+      } else {
+        message += ".";
+      }
+      message +=
+        "\n\nPlease report this, along with any output in the Extension Console.";
+      nova.workspace.showActionPanel(
+        message,
+        {
+          buttons: ["Restart", "Ignore"],
+        },
+        (index) => {
+          if (index == 0) {
+            nova.commands.invoke("sciencefidelity.elm.reload");
+          }
+        }
+      );
+    })
+  );
+
   client.start();
 
 }
 
 export async function activate() {
-  console.log("activating...");
-  if (nova.inDevMode()) {
-    const notification = new NotificationRequest("activated");
-    notification.body = "Elm extension is loading";
-    nova.notifications.add(notification);
-  }
-  return asyncActivate()
-    .catch((err) => {
-      console.error("Failed to activate");
-      console.error(err);
-      nova.workspace.showErrorMessage(err);
-    })
-    .then(() => {
-      console.log("activated");
-    });
+  if (nova.config.get("sciencefidelity.elm.config.enableAnalyzer", "boolean")) {
+    console.log("activating...");
+    if (nova.inDevMode()) {
+      const notification = new NotificationRequest("activated");
+      notification.body = "Elm extension is loading";
+      nova.notifications.add(notification);
+    }
+    return asyncActivate()
+      .catch((err) => {
+        console.error("Failed to activate");
+        console.error(err);
+        nova.workspace.showErrorMessage(err);
+      })
+      .then(() => {
+        console.log("activated");
+      });
+  };
 }
 
 export function deactivate() {
   client?.stop();
+  compositeDisposable.dispose();
 }

@@ -18,5 +18,14 @@
     "entitlements": {
         "process": true,
         "filesystem": "readonly"
-    }
+    },
+    "config": [
+        {
+            "key": "sciencefidelity.elm.config.enableAnalyzer",
+            "title": "Enable Language Server",
+            "type": "boolean",
+            "default": false
+        }
+    ]
+
 }
