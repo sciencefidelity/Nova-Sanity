@@ -2,7 +2,7 @@
 <syntax name="dart">
     <meta>
         <name>Elm</name>
-        <type>script</type>
+        <type>compiled</type>
         <preferred-file-extension>elm</preferred-file-extension>
         <scriptable shebang="#!/usr/bin/env dart" />
     </meta>
@@ -22,14 +22,14 @@
 
     <comments>
         <single>
-            <expression>\-\-</expression>
+            <expression>--</expression>
         </single>
         <multiline>
             <starts-with>
-                <expression>\{\-</expression>
+                <expression>{-</expression>
             </starts-with>
             <ends-with>
-                <expression>\-\}</expression>
+                <expression>-}</expression>
             </ends-with>
         </multiline>
     </comments>
@@ -52,8 +52,8 @@
 
     <scopes>
         <!-- <include syntax="self" collection="shebang" /> -->
-        <!-- <include syntax="self" collection="comments" /> -->
-        <!-- <include syntax="self" collection="imports" /> -->
+        <include syntax="self" collection="comments" />
+        <include syntax="self" collection="import" />
         <!-- <include syntax="self" collection="annotations" /> -->
         <!-- <include syntax="self" collection="keywords" /> -->
         <!-- <include syntax="self" collection="constants-and-special-vars" /> -->
@@ -61,6 +61,46 @@
     </scopes>
 
     <collections>
+        <!-- !Comments -->
+        <collection name="comments">
+            <!-- comment line -->
+            <scope name="elm.comment.line.double-dash" spell-check="true">
+                <starts-with>
+                    <expression>--</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>$</expression>
+                </ends-with>
+                <capture number="1" name="elm.comment.punctuation.definition" />
+            </scope>
+            <include syntax="self" collection="block-comment" />
+        </collection>
+        <collection name="block-comment">
+            <!-- comment block -->
+            <scope name="elm.comment.block" spell-check="true">
+                <starts-with>
+                    <expression>\{-</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>-\}</expression>
+                </ends-with>
+                <capture number="0" name="elm.comment.punctuation.definition" />
+            </scope>
+            <include syntax="self" collection="block-comment" />
+        </collection>
+        <!-- !Import -->
+        <!-- <collection name="import">
+            <scope name="keyword.meta.import.elm">
+                <starts-with>
+                    <expression>^\b(import)\s+</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>\n(?!\s)</expression>
+                </ends-with>
+                <capture number="1" name="elm.keyword.control.import" />
+            </scope>
+            <include syntax="self" collection="module-chunk" />
+        </collection> -->
 
     </collections>
 </syntax>
