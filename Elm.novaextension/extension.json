@@ -2,7 +2,7 @@
     "identifier": "sciencefidelity.elm",
     "name": "Elm",
     "organization": "Matt Cook",
-    "description": "Elm Language Definition for Nova",
+    "description": "Elm Language Definition for Nova.",
     "version": "0.1.0",
     "categories": ["languages"],
     "license": "MIT",
@@ -10,6 +10,7 @@
     "bugs": "https://github.com/sciencefidelity/Nova-Elm/issues",
     "homepage": "https://mattcook.dev",
     "keywords": ["elm"],
+    "main": "main.dist.js",
     "activationEvents": [
         "onLanguage:elm",
         "onWorkspaceContains:elm.json"
