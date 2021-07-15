@@ -50,11 +50,72 @@
     </surrounding-pairs>
 
     <scopes>
+        <include syntax="self" collection="comma" />
+        <include syntax="self" collection="perens" />
         <include syntax="self" collection="comments" />
         <include syntax="self" collection="import" />
+        <include syntax="self" collection="module" />
+        <include syntax="self" collection="string-triple" />
+
+        <scope name="elm.keyword.unused">
+            <expression>\b(_)\b</expression>
+        </scope>
+        <scope name="elm.constant.numeric.float">
+            <expression>\b([0-9]+\.[0-9]+([eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)\b</expression>
+        </scope>
+        <scope name="elm.constant.numeric">
+            <expression>\b(0x[0-9a-fA-F]+)\b</expression>
+        </scope>
+        <scope name="elm.meta.record.field.update">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+(\|)\s+([a-z][a-zA-Z0-9_]*)</expression>
+            <capture number="1" name="elm.punctuation.bracket" />
+            <capture number="2" name="elm.record.name" />
+            <capture number="3" name="elm.keyword.pipe" />
+            <capture number="4" name="elm.entity.name.record.field" />
+        </scope>
+        <scope name="elm.meta.record.field.update">
+            <expression>(\|)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="elm.keyword.pipe" />
+            <capture number="2" name="elm.entity.name.record.field" />
+            <capture number="3" name="elm.keyword.operator.assignment" />
+        </scope>
+        <scope name="elm.meta.record.field.update">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+$</expression>
+            <capture number="1" name="elm.punctuation.bracket" />
+            <capture number="2" name="elm.record.name" />
+        </scope>
+        <scope name="elm.meta.record.field">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="elm.punctuation.bracket" />
+            <capture number="2" name="elm.entity.name.record.field" />
+            <capture number="3" name="elm.keyword.operator.assignment" />
+        </scope>
+        <scope name="elm.meta.record.field">
+            <expression>(,)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="elm.punctuation.separator.comma" />
+            <capture number="2" name="elm.entity.name.record.field" />
+            <capture number="3" name="elm.keyword.operator.assignment" />
+        </scope>
+        <scope name="elm.punctuation.bracket">
+            <expression>(\}|\{)</expression>
+        </scope>
     </scopes>
 
     <collections>
+
+        <!-- !Comma -->
+        <collection name="comma">
+            <scope name="elm.punctuation.separator.comma">
+                <expression>(,)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Perens -->
+        <collection name="perens">
+            <scope name="elm.punctuation.parens">
+                <expression>(\(|\))</expression>
+            </scope>
+        </collection>
 
         <!-- !Comments -->
         <collection name="comments">
@@ -80,32 +141,70 @@
 
         <!-- !Import -->
         <collection name="import">
-            <scope name="elm.keyword.meta.import">
+            <scope name="elm.meta.import">
                 <starts-with>
                     <expression>^\b(import)\s</expression>
                     <capture number="1" name="elm.keyword.control.import" />
                 </starts-with>
-                <!-- <ends-with>
+                <ends-with>
                     <expression>\n(?!\s)</expression>
-                </ends-with> -->
-                <ends-with />
-                <subscopes anchored="true">
-                    <!-- <scope name="elm.identifier">
-                        <expression>\b(A-Za-zÀ-ÖØ-öø-ÿŸřŘšŠžŽ0-9_)\b</expression>
-                    </scope> -->
-                    <scope name="elm.keyword.other.import">
-                        <starts-with>
-                            <expression>\b(as|exposing)\b</expression>
-                            <capture number="1" name="elm.keyword.other.import" />
-                        </starts-with>
-                        <ends-with />
+                </ends-with>
+                <subscopes>
+                    <scope name="elm.keyword.control">
+                        <expression>\b(as|exposing)\b</expression>
                     </scope>
-                    <!-- <include syntax="self" collection="module-chunk" optional="true" />
-                    <include syntax="self" collection="period" optional="true" />
-                    <scope name="elm.punctuation.spaces" optional="true">
+                    <include syntax="self" collection="module-chunk" />
+                    <include syntax="self" collection="period" />
+                    <scope name="elm.punctuation.spaces">
                         <expression>\s+</expression>
                     </scope>
-                    <include syntax="self" collection="module-exports" /> -->
+                    <include syntax="self" collection="module-exports" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Module -->
+        <collection name="module">
+            <scope name="elm.meta.declaration.module">
+                <starts-with>
+                    <expression>^\b((port |effect )?module)\s+</expression>
+                    <capture number="0" name="elm.keyword.other" />
+                </starts-with>
+                <ends-with>
+                    <expression>\n(?!\s)</expression>
+                    <capture number="0" name="elm.keyword.other" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="module-chunk" />
+                    <include syntax="self" collection="period" />
+                    <scope name="elm.keyword.other">
+                        <expression>(exposing)</expression>
+                    </scope>
+                    <scope name="elm.punctuation.spaces">
+                        <expression>\s+</expression>
+                    </scope>
+                    <include syntax="self" collection="module-exports" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !String-triple -->
+        <collection name="string-triple">
+            <scope name="elm.string.quoted.triple">
+                <starts-with>
+                    <expression>&quot;&quot;&quot;</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>&quot;&quot;&quot;</expression>
+                </ends-with>
+                <capture number="0" name="elm.punctuation.definition.string.begin" />
+                <subscopes>
+                    <scope name="elm.constant.character.escape">
+                        <expression>\\(NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\&quot;&apos;\&amp;]|x[0-9a-fA-F]{1,5})</expression>
+                    </scope>
+                    <scope name="elm.constant.character.escape.control">
+                        <expression>\^[A-Z@\[\]\\\^_]</expression>
+                    </scope>
                 </subscopes>
             </scope>
         </collection>
