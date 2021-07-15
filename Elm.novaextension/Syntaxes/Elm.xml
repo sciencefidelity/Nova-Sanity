@@ -50,8 +50,8 @@
     </surrounding-pairs>
 
     <scopes>
+        <include syntax="self" collection="parens" />
         <include syntax="self" collection="comma" />
-        <include syntax="self" collection="perens" />
         <include syntax="self" collection="comments" />
         <include syntax="self" collection="import" />
         <include syntax="self" collection="module" />
@@ -62,7 +62,17 @@
         <include syntax="self" collection="period" />
         <include syntax="self" collection="square-brackets" />
         <include syntax="self" collection="record-prefix" />
+        <include syntax="self" collection="module-prefix" />
+        <include syntax="self" collection="constructor" />
+        <include syntax="self" collection="value" />
+        <include syntax="self" collection="unit" />
+        <include syntax="self" collection="top-level-value" />
+        <include syntax="self" collection="record-accessor" />
         <include syntax="self" collection="infix-op" />
+        <include syntax="self" collection="type-declaration" />
+        <include syntax="self" collection="type-alias-declaration" />
+        <include syntax="self" collection="type-signature" />
+        <include syntax="self" collection="glsl" />
 
         <scope name="elm.keyword.unused">
             <expression>\b(_)\b</expression>
@@ -113,13 +123,13 @@
 
         <!-- !Comma -->
         <collection name="comma">
-            <scope name="elm.punctuation.separator.comma">
+            <scope name="elm.value.entity.separator.comma">
                 <expression>(,)</expression>
             </scope>
         </collection>
 
-        <!-- !Perens -->
-        <collection name="perens">
+        <!-- !parens -->
+        <collection name="parens">
             <scope name="elm.punctuation.parens">
                 <expression>(\(|\))</expression>
             </scope>
@@ -319,7 +329,7 @@
 
         <!-- !Square-brackets -->
         <collection name="square-brackets">
-            <scope name="elm.punctuation.definition.list">
+            <scope name="elm.value.entity.definition.list">
                 <expression>[\[\]]</expression>
             </scope>
         </collection>
@@ -334,11 +344,242 @@
             </scope>
         </collection>
 
+        <!-- !Module-prefix -->
+        <collection name="module-prefix">
+            <scope name="elm.meta.module.name">
+                <expression>([A-Z][a-zA-Z0-9_]*)(\.)</expression>
+                <capture number="1" name="elm.support.module" />
+                <capture number="2" name="elm.keyword.other.period" />
+            </scope>
+        </collection>
+
+        <!-- !Constructor -->
+        <collection name="constructor">
+            <scope name="elm.constant.type-constructor">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Value -->
+        <collection name="value">
+            <scope name="elm.meta.value">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Unit -->
+        <collection name="unit">
+            <scope name="elm.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Top-level-value -->
+        <collection name="top-level-value">
+            <scope name="elm.entity.name.function.top-level">
+                <expression>^[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Record-accessor -->
+        <collection name="top-level-value">
+            <scope name="elm.record.accessor">
+                <expression>(\.)([a-z][a-zA-Z0-9_]*)</expression>
+                <capture number="1" name="elm.keyword.other.period" />
+                <capture number="2" name="elm.entity.name.record.field.accessor" />
+            </scope>
+        </collection>
+
         <!-- !Infix-op -->
         <collection name="infix-op">
             <scope name="elm.keyword.operator">
                 <expression>(&lt;/&gt;|&lt;\?&gt;|&lt;\||&lt;=|\|\||&amp;&amp;|&gt;=|\|&gt;|\|=|\|\.|\+\+|::|/=|==|/|&gt;&gt;|&lt;&lt;|&lt;|&gt;|\^|\+|-|/|\*)</expression>
             </scope>
+        </collection>
+
+        <!-- !Type-declaration -->
+        <collection name="type-declaration">
+            <scope name="elm.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(type\s+)([A-Z][a-zA-Z0-9_&apos;]*)\s+</expression>
+                    <capture number="1" name="elm.keyword.type" />
+                    <capture number="2" name="elm.keyword.type" />
+                </starts-with>
+                <ends-with>
+                    <expression>^(?=\S)</expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="elm.meta.record.field">
+                        <expression>^\s*([A-Z][a-zA-Z0-9_]*)\b</expression>
+                        <capture number="1" name="elm.constant.type-constructor" />
+                    </scope>
+                    <scope name="elm.punctuation.spaces">
+                        <expression>\s+</expression>
+                    </scope>
+                    <scope name="elm.meta.record.field">
+                        <expression>(\=|\|)\s+([A-Z][a-zA-Z0-9_]*)\b</expression>
+                        <capture number="1" name="elm.keyword.operator.assignment" />
+                        <capture number="2" name="elm.constant.type-constructor" />
+                    </scope>
+                    <scope name="elm.keyword.operator.assignment">
+                        <expression>\=</expression>
+                    </scope>
+                    <scope name="elm.keyword.operator.arrow">
+                        <expression>\-\&gt;</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="elm.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="elm.type.elm">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="type-record" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-alias-declaration -->
+        <collection name="type-alias-declaration">
+            <scope name="elm.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(type\s+)(alias\s+)([A-Z][a-zA-Z0-9_.&apos;]*)\s+</expression>
+                    <capture number="1" name="elm.keyword.type" />
+                    <capture number="2" name="elm.keyword.type-alias" />
+                    <capture number="3" name="elm.storage.type" />
+                </starts-with>
+                <ends-with>
+                    <expression>^(?=\S)</expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="elm.punctuation.spaces">
+                        <expression>\n\s+</expression>
+                    </scope>
+                    <scope name="elm.keyword.operator.assignment">
+                        <expression>\=</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="elm.storage.type">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="elm.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="type-record" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-record -->
+        <collection name="type-record">
+            <scope name="elm.meta.function.type-record">
+                <starts-with>
+                    <expression>(\{)</expression>
+                    <capture number="1" name="elm.punctuation.section.braces.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="elm.punctuation.section.braces.end" />
+                </ends-with>
+                <subscopes>
+                    <scope name="elm.punctuation.spaces">
+                        <expression>\n\s+</expression>
+                    </scope>
+                    <scope name="elm.keyword.operator.arrow">
+                        <expression>-&gt;</expression>
+                    </scope>
+                    <scope name="elm.meta.record.field">
+                        <expression>([a-z][a-zA-Z0-9_]*)\s+(\:)</expression>
+                        <capture number="1" name="elm.entity.name.record.field" />
+                        <capture number="2" name="elm.keyword.other" />
+                    </scope>
+                    <scope name="elm.value.comma.elm">
+                        <expression>\,</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="elm.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="elm.storage.type">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-signature -->
+        <collection name="type-signature">
+            <scope name="elm.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(port\s+)?([a-z_][a-zA-Z0-9_&apos;]*)\s+(\:)</expression>
+                    <capture number="1" name="elm.keyword.other.port" />
+                    <capture number="2" name="elm.entity.name.function" />
+                    <capture number="3" name="elm.other.colon.elm" />
+                </starts-with>
+                <ends-with>
+                    <expression>((^(?=[a-z]))|^$)</expression>
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="type-signature-chunk" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-signature-chunk -->
+        <collection name="type-signature-chunk">
+            <scope name="elm.keyword.operator.arrow">
+                <expression>-&gt;</expression>
+            </scope>
+            <scope name="elm.punctuation.spaces">
+                <expression>\s+</expression>
+            </scope>
+            <include syntax="self" collection="module-prefix" />
+            <scope name="elm.variable.type">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="elm.storage.type">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="elm.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+            <include syntax="self" collection="comma" />
+            <include syntax="self" collection="parens" />
+            <include syntax="self" collection="comments" />
+            <include syntax="self" collection="type-record" />
+        </collection>
+
+        <!-- !Glsl -->
+        <collection name="glsl">
+            <scope name="elm.embedded.block.glsl">
+                <starts-with>
+                    <expression>(\[)(glsl)(\|)</expression>
+                    <capture number="1" name="elm.entity.glsl.bracket" />
+                    <capture number="2" name="elm.entity.glsl.name" />
+                    <capture number="3" name="elm.entity.glsl.bracket" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\|\])</expression>
+                    <capture number="1" name="elm.entity.glsl.bracket" />
+                </ends-with>
+            </scope>
+            <scope name="elm.punctuation.spaces">
+                <expression>\s+</expression>
+            </scope>
+            <include syntax="self" collection="module-prefix" />
+            <scope name="elm.variable.type">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="elm.storage.type">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="elm.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+            <include syntax="glsl" collection="comma" />
         </collection>
 
     </collections>
