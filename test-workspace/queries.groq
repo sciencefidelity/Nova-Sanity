@@ -388,7 +388,7 @@
     ] | order(date asc)[0..3]{ _id, slug, title },
     "exhibitions": *[
       _type == "exhibition"
-      && dateTime(now()) < dateTime(dateStart)
+      && dateTime(now()) < dateTime(dateStart) // hello
       && !(_id in path('drafts.**'))
     ] | order(dateStart asc)[0..3]{ _id, dateStart, dateEnd, slug, title }
   },
