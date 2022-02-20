@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="dart">
+    <meta>
+        <name>GROQ</name>
+        <type>script</type>
+        <preferred-file-extension>groq</preferred-file-extension>
+    </meta>
+
+    <detectors>
+        <extension priority="1.0">groq</extension>
+    </detectors>
+
+    <indentation>
+        <increase>
+            <expression>(\{[^}\"']*$)|(\[[^\]\"']*$)|(\([^)\"']*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
+    </indentation>
+
+    <comments>
+        <single>
+            <expression>--</expression>
+        </single>
+        <multiline>
+            <starts-with>
+                <expression>{-</expression>
+            </starts-with>
+            <ends-with>
+                <expression>-}</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
+        <pair open="&quot;" close="&quot;" />
+        <pair open="“" close="”" />
+        <pair open="‘" close="’" />
+    </surrounding-pairs>
+
+    <scopes>
+        <include syntax="self" collection="parens" />
+        <include syntax="self" collection="comma" />
+        <include syntax="self" collection="comments" />
+        <include syntax="self" collection="import" />
+        <include syntax="self" collection="module" />
+        <include syntax="self" collection="string-triple" />
+        <include syntax="self" collection="string-quote" />
+        <include syntax="self" collection="char" />
+        <include syntax="self" collection="debug" />
+        <include syntax="self" collection="period" />
+        <include syntax="self" collection="square-brackets" />
+        <include syntax="self" collection="record-prefix" />
+        <include syntax="self" collection="module-prefix" />
+        <include syntax="self" collection="constructor" />
+        <include syntax="self" collection="value" />
+        <include syntax="self" collection="unit" />
+        <include syntax="self" collection="top-level-value" />
+        <include syntax="self" collection="record-accessor" />
+        <include syntax="self" collection="infix-op" />
+        <include syntax="self" collection="type-declaration" />
+        <include syntax="self" collection="type-alias-declaration" />
+        <include syntax="self" collection="type-signature" />
+        <include syntax="self" collection="glsl" />
+
+        <scope name="groq.keyword.unused">
+            <expression>\b(_)\b</expression>
+        </scope>
+        <scope name="groq.constant.numeric.float">
+            <expression>\b([0-9]+\.[0-9]+([eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)\b</expression>
+        </scope>
+        <scope name="groq.constant.numeric">
+            <expression>\b(0x[0-9a-fA-F]+)\b</expression>
+        </scope>
+        <scope name="groq.meta.record.field.update">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+(\|)\s+([a-z][a-zA-Z0-9_]*)</expression>
+            <capture number="1" name="groq.punctuation.bracket" />
+            <capture number="2" name="groq.record.name" />
+            <capture number="3" name="groq.keyword.pipe" />
+            <capture number="4" name="groq.entity.name.record.field" />
+        </scope>
+        <scope name="groq.meta.record.field.update">
+            <expression>(\|)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="groq.keyword.pipe" />
+            <capture number="2" name="groq.entity.name.record.field" />
+            <capture number="3" name="groq.keyword.operator.assignment" />
+        </scope>
+        <scope name="groq.meta.record.field.update">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+$</expression>
+            <capture number="1" name="groq.punctuation.bracket" />
+            <capture number="2" name="groq.record.name" />
+        </scope>
+        <scope name="groq.meta.record.field">
+            <expression>(\{)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="groq.punctuation.bracket" />
+            <capture number="2" name="groq.entity.name.record.field" />
+            <capture number="3" name="groq.keyword.operator.assignment" />
+        </scope>
+        <scope name="groq.meta.record.field">
+            <expression>(,)\s+([a-z][a-zA-Z0-9_]*)\s+(\=)</expression>
+            <capture number="1" name="groq.punctuation.separator.comma" />
+            <capture number="2" name="groq.entity.name.record.field" />
+            <capture number="3" name="groq.keyword.operator.assignment" />
+        </scope>
+        <scope name="groq.punctuation.bracket">
+            <expression>(\}|\{)</expression>
+        </scope>
+
+    </scopes>
+
+    <collections>
+
+        <!-- !Comma -->
+        <collection name="comma">
+            <scope name="groq.value.entity.separator.comma">
+                <expression>(,)</expression>
+            </scope>
+        </collection>
+
+        <!-- !parens -->
+        <collection name="parens">
+            <scope name="groq.punctuation.parens">
+                <expression>(\(|\))</expression>
+            </scope>
+        </collection>
+
+        <!-- !Comments -->
+        <collection name="comments">
+            <scope name="groq.comment.line.double-dash" spell-check="true">
+                <starts-with>
+                    <expression>--</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>$</expression>
+                </ends-with>
+                <capture number="0" name="groq.comment.punctuation.definition" />
+            </scope>
+            <scope name="groq.comment.block" spell-check="true">
+                <starts-with>
+                    <expression>\{-</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>-\}</expression>
+                </ends-with>
+                <capture number="0" name="groq.comment.punctuation.definition" />
+            </scope>
+        </collection>
+
+        <!-- !Import -->
+        <collection name="import">
+            <scope name="groq.meta.import">
+                <starts-with>
+                    <expression>^\b(import)\s</expression>
+                    <capture number="1" name="groq.keyword.control.import" />
+                </starts-with>
+                <ends-with>
+                    <expression>$</expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.keyword.control">
+                        <expression>(as|exposing)</expression>
+                    </scope>
+                    <include syntax="self" collection="module-chunk" />
+                    <include syntax="self" collection="period" />
+                    <scope name="groq.punctuation.spaces">
+                        <expression>\s+</expression>
+                    </scope>
+                    <include syntax="self" collection="module-exports" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Module -->
+        <collection name="module">
+            <scope name="groq.meta.declaration.module">
+                <starts-with>
+                    <expression>^\b((port |effect )?module)\s+</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>\n(?!\s)</expression>
+                </ends-with>
+                <capture number="1" name="groq.keyword.other" />
+
+                <subscopes anchored="true">
+                    <include syntax="self" collection="module-chunk" />
+                    <scope name="groq.keyword.other">
+                        <expression>(exposing)</expression>
+                    </scope>
+                    <include syntax="self" collection="module-exports" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !String-triple -->
+        <collection name="string-triple">
+            <scope name="groq.string.quoted.triple">
+                <starts-with>
+                    <expression>&quot;&quot;&quot;</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>&quot;&quot;&quot;</expression>
+                </ends-with>
+                <capture number="0" name="groq.punctuation.definition.string.begin" />
+                <subscopes>
+                    <scope name="groq.constant.character.escape">
+                        <expression>\\(NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\&quot;&apos;\&amp;]|x[0-9a-fA-F]{1,5})</expression>
+                    </scope>
+                    <scope name="groq.constant.character.escape.control">
+                        <expression>\^[A-Z@\[\]\\\^_]</expression>
+                    </scope>
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !String-quote -->
+        <collection name="string-quote">
+            <scope name="groq.string.quoted.double">
+                <starts-with>
+                    <expression>&quot;</expression>
+                    <capture number="0" name="groq.punctuation.definition.string.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>&quot;</expression>
+                    <capture number="0" name="groq.punctuation.definition.string.begin" />
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.constant.character.escape">
+                        <expression>\\(NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\&quot;&apos;\&amp;]|x[0-9a-fA-F]{1,5})</expression>
+                    </scope>
+                    <scope name="groq.constant.character.escape.control">
+                        <expression>\^[A-Z@\[\]\\\^_]</expression>
+                    </scope>
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Char -->
+        <collection name="char">
+            <scope name="groq.string.quoted.single">
+                <starts-with>
+                    <expression>&apos;</expression>
+                    <capture number="0" name="groq.punctuation.definition.char.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>&apos;</expression>
+                    <capture number="0" name="groq.punctuation.definition.char.begin" />
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.constant.character.escape">
+                        <expression>\\(NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\&quot;&apos;\&amp;]|x[0-9a-fA-F]{1,5})</expression>
+                    </scope>
+                    <scope name="groq.constant.character.escape.control">
+                        <expression>\^[A-Z@\[\]\\\^_]</expression>
+                    </scope>
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Debug -->
+        <collection name="debug">
+            <scope name="groq.invalid.illegal.debug">
+                <expression>\b(Debug)\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Module-exports -->
+        <collection name="module-exports">
+            <scope name="groq.meta.declaration.exports">
+                <starts-with>
+                    <expression>(\()</expression>
+                    <capture number="0" name="groq.punctuation.parens.module-export" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\))</expression>
+                    <capture number="0" name="groq.punctuation.parens.module-export" />
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.entity.name.function">
+                        <expression>\b[a-z][a-zA-Z_&apos;0-9]*</expression>
+                    </scope>
+                    <scope name="groq.storage.type">
+                        <expression>\\b[A-Z][A-Za-z_&apos;0-9]*</expression>
+                    </scope>
+                    <scope name="groq.punctuation.separator.comma">
+                        <expression>,</expression>
+                    </scope>
+                    <scope name="groq.punctuation.spaces">
+                        <expression>\s+</expression>
+                    </scope>
+                    <include syntax="self" collection="comma" />
+                    <scope name="groq.punctuation.parens.ellipses">
+                        <expression>\(\.\.\)</expression>
+                    </scope>
+                    <scope name="groq.punctuation.parens.ellipses">
+                        <expression>\.\.</expression>
+                    </scope>
+                    <include syntax="self" collection="infix-op" />
+                    <scope name="groq.meta.other.unknown">
+                        <expression>\(.*?\)</expression>
+                    </scope>
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Module-chunk -->
+        <collection name="module-chunk">
+            <scope name="groq.support.module">
+                <expression>[A-Z][a-zA-Z0-9_]*</expression>
+            </scope>
+        </collection>
+
+        <!-- !Period -->
+        <collection name="period">
+            <scope name="groq.keyword.other.period">
+                <expression>[.]</expression>
+            </scope>
+        </collection>
+
+        <!-- !Square-brackets -->
+        <collection name="square-brackets">
+            <scope name="groq.value.entity.definition.list">
+                <expression>[\[\]]</expression>
+            </scope>
+        </collection>
+
+        <!-- !Record-prefix -->
+        <collection name="record-prefix">
+            <scope name="groq.record.accessor">
+                <expression>([a-z][a-zA-Z0-9_]*)(\.)([a-z][a-zA-Z0-9_]*)</expression>
+                <capture number="1" name="groq.record.name" />
+                <capture number="2" name="groq.keyword.other.period" />
+                <capture number="3" name="groq.entity.name.record.field.accessor" />
+            </scope>
+        </collection>
+
+        <!-- !Module-prefix -->
+        <collection name="module-prefix">
+            <scope name="groq.meta.module.name">
+                <expression>([A-Z][a-zA-Z0-9_]*)(\.)</expression>
+                <capture number="1" name="groq.support.module" />
+                <capture number="2" name="groq.keyword.other.period" />
+            </scope>
+        </collection>
+
+        <!-- !Constructor -->
+        <collection name="constructor">
+            <scope name="groq.constant.type-constructor">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Value -->
+        <collection name="value">
+            <scope name="groq.meta.value">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Unit -->
+        <collection name="unit">
+            <scope name="groq.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Top-level-value -->
+        <collection name="top-level-value">
+            <scope name="groq.entity.name.function.top-level">
+                <expression>^[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Record-accessor -->
+        <collection name="top-level-value">
+            <scope name="groq.record.accessor">
+                <expression>(\.)([a-z][a-zA-Z0-9_]*)</expression>
+                <capture number="1" name="groq.keyword.other.period" />
+                <capture number="2" name="groq.entity.name.record.field.accessor" />
+            </scope>
+        </collection>
+
+        <!-- !Infix-op -->
+        <collection name="infix-op">
+            <scope name="groq.keyword.operator">
+                <expression>(&lt;/&gt;|&lt;\?&gt;|&lt;\||&lt;=|\|\||&amp;&amp;|&gt;=|\|&gt;|\|=|\|\.|\+\+|::|/=|==|/|&gt;&gt;|&lt;&lt;|&lt;|&gt;|\^|\+|-|/|\*)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Type-declaration -->
+        <collection name="type-declaration">
+            <scope name="groq.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(type\s+)([A-Z][a-zA-Z0-9_&apos;]*)\s+</expression>
+                    <capture number="1" name="groq.keyword.type" />
+                    <capture number="2" name="groq.keyword.type" />
+                </starts-with>
+                <ends-with>
+                    <expression>^(?=\S)</expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.meta.record.field">
+                        <expression>^\s*([A-Z][a-zA-Z0-9_]*)\b</expression>
+                        <capture number="1" name="groq.constant.type-constructor" />
+                    </scope>
+                    <scope name="groq.punctuation.spaces">
+                        <expression>\s+</expression>
+                    </scope>
+                    <scope name="groq.meta.record.field">
+                        <expression>(\=|\|)\s+([A-Z][a-zA-Z0-9_]*)\b</expression>
+                        <capture number="1" name="groq.keyword.operator.assignment" />
+                        <capture number="2" name="groq.constant.type-constructor" />
+                    </scope>
+                    <scope name="groq.keyword.operator.assignment">
+                        <expression>\=</expression>
+                    </scope>
+                    <scope name="groq.keyword.operator.arrow">
+                        <expression>\-\&gt;</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="groq.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="groq.type.groq">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="type-record" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-alias-declaration -->
+        <collection name="type-alias-declaration">
+            <scope name="groq.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(type\s+)(alias\s+)([A-Z][a-zA-Z0-9_.&apos;]*)\s+</expression>
+                    <capture number="1" name="groq.keyword.type" />
+                    <capture number="2" name="groq.keyword.type-alias" />
+                    <capture number="3" name="groq.storage.type" />
+                </starts-with>
+                <ends-with>
+                    <expression>^(?=\S)</expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.punctuation.spaces">
+                        <expression>\n\s+</expression>
+                    </scope>
+                    <scope name="groq.keyword.operator.assignment">
+                        <expression>\=</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="groq.storage.type">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="groq.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="type-record" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-record -->
+        <collection name="type-record">
+            <scope name="groq.meta.function.type-record">
+                <starts-with>
+                    <expression>(\{)</expression>
+                    <capture number="1" name="groq.punctuation.section.braces.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="groq.punctuation.section.braces.end" />
+                </ends-with>
+                <subscopes>
+                    <scope name="groq.punctuation.spaces">
+                        <expression>\n\s+</expression>
+                    </scope>
+                    <scope name="groq.keyword.operator.arrow">
+                        <expression>-&gt;</expression>
+                    </scope>
+                    <scope name="groq.meta.record.field">
+                        <expression>([a-z][a-zA-Z0-9_]*)\s+(\:)</expression>
+                        <capture number="1" name="groq.entity.name.record.field" />
+                        <capture number="2" name="groq.keyword.other" />
+                    </scope>
+                    <scope name="groq.value.comma.groq">
+                        <expression>\,</expression>
+                    </scope>
+                    <include syntax="self" collection="module-prefix" />
+                    <scope name="groq.variable.type">
+                        <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <scope name="groq.storage.type">
+                        <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+                    </scope>
+                    <include syntax="self" collection="comments" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-signature -->
+        <collection name="type-signature">
+            <scope name="groq.meta.function.type-declaration">
+                <starts-with>
+                    <expression>^(port\s+)?([a-z_][a-zA-Z0-9_&apos;]*)\s+(\:)</expression>
+                    <capture number="1" name="groq.keyword.other.port" />
+                    <capture number="2" name="groq.entity.name.function" />
+                    <capture number="3" name="groq.other.colon.groq" />
+                </starts-with>
+                <ends-with>
+                    <expression>((^(?=[a-z]))|^$)</expression>
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="type-signature-chunk" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Type-signature-chunk -->
+        <collection name="type-signature-chunk">
+            <scope name="groq.keyword.operator.arrow">
+                <expression>-&gt;</expression>
+            </scope>
+            <scope name="groq.punctuation.spaces">
+                <expression>\s+</expression>
+            </scope>
+            <include syntax="self" collection="module-prefix" />
+            <scope name="groq.variable.type">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="groq.storage.type">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="groq.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+            <include syntax="self" collection="comma" />
+            <include syntax="self" collection="parens" />
+            <include syntax="self" collection="comments" />
+            <include syntax="self" collection="type-record" />
+        </collection>
+
+        <!-- !Glsl -->
+        <collection name="glsl">
+            <scope name="groq.embedded.block.glsl">
+                <starts-with>
+                    <expression>(\[)(glsl)(\|)</expression>
+                    <capture number="1" name="groq.entity.glsl.bracket" />
+                    <capture number="2" name="groq.entity.glsl.name" />
+                    <capture number="3" name="groq.entity.glsl.bracket" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\|\])</expression>
+                    <capture number="1" name="groq.entity.glsl.bracket" />
+                </ends-with>
+            </scope>
+            <scope name="groq.punctuation.spaces">
+                <expression>\s+</expression>
+            </scope>
+            <include syntax="self" collection="module-prefix" />
+            <scope name="groq.variable.type">
+                <expression>\b[a-z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="groq.storage.type">
+                <expression>\b[A-Z][a-zA-Z0-9_]*\b</expression>
+            </scope>
+            <scope name="groq.constant.unit">
+                <expression>\(\)</expression>
+            </scope>
+            <include syntax="glsl" collection="comma" />
+        </collection>
+
+    </collections>
+</syntax>
