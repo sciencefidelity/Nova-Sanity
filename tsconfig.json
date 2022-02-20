@@ -4,9 +4,18 @@
     "sourceMap": true,
     "noEmit": true,
     "strict": true,
+    "allowJs": true,
+    "checkJs": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "baseUrl": "./src",
+    "types": ["bluebird", "jest", "node", "nova-editor-node"],
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "include": ["src/*", "src/**/*"]
   }
 }
