@@ -1,8 +1,8 @@
-(global as any).nova = {
+;(global as any).nova = {
   environment: {
-    HOME: "/home",
+    HOME: "/home"
   },
   inDevMode() {
-    return false;
-  },
-};
+    return false
+  }
+}

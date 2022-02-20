@@ -4,6 +4,7 @@
     "sourceMap": true,
     "noEmit": true,
     "strict": true,
+    "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false,
     "noImplicitReturns": true,
@@ -15,7 +16,13 @@
     "types": ["bluebird", "jest", "node", "nova-editor-node"],
     "paths": {
       "@/*": ["./*"]
-    },
-    "include": ["src/*", "src/**/*"]
-  }
+    }
+  },
+  "include": ["src/*", "src/**/*"],
+  "exclude": [
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts"
+  ]
 }

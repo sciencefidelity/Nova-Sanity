@@ -11,10 +11,7 @@
   "homepage": "https://mattcook.dev",
   "keywords": ["sanity", "sanity.io", "groq"],
   "main": "main.dist.js",
-  "activationEvents": [
-    "onLanguage:groq",
-    "onWorkspaceContains:sanity.json"
-  ],
+  "activationEvents": ["onLanguage:groq", "onWorkspaceContains:sanity.json"],
   "entitlements": {
     "process": true,
     "filesystem": "readonly"
