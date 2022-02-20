@@ -1,1 +1,1 @@
-./Elm.novaextension/CHANGELOG.md
+./Sanity.novaextension/CHANGELOG.md

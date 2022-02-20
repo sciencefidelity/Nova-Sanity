@@ -1,1 +1,1 @@
-./Elm.novaextension/LICENSE.md
+./Sanity.novaextension/LICENSE.md
