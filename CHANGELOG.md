@@ -1,1 +1,1 @@
-./Sanity.novaextension/CHANGELOG.md
+./sanity.novaextension/CHANGELOG.md
