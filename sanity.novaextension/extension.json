@@ -1,0 +1,19 @@
+{
+  "identifier": "sciencefidelity.sanity",
+  "name": "Sanity",
+  "organization": "Matt Cook",
+  "description": "Tools to make developing with sanity.io more awesome.",
+  "version": "0.1.0",
+  "categories": ["languages"],
+  "license": "MIT",
+  "repository": "https://github.com/sciencefidelity/Nova-Sanity",
+  "bugs": "https://github.com/sciencefidelity/Nova-Sanity/issues",
+  "homepage": "https://mattcook.dev",
+  "keywords": ["sanity", "sanity.io", "groq"],
+  "main": "main.dist.js",
+  "activationEvents": ["onLanguage:groq", "onWorkspaceContains:sanity.json"],
+  "entitlements": {
+    "process": true,
+    "filesystem": "readonly"
+  }
+}

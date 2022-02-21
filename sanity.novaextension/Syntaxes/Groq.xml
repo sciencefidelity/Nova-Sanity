@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="groq">
+    <meta>
+        <name>GROQ</name>
+        <type>script</type>
+        <preferred-file-extension>groq</preferred-file-extension>
+    </meta>
+
+    <detectors>
+        <extension priority="1.0">groq</extension>
+    </detectors>
+
+    <indentation>
+        <increase>
+            <expression>(\{[^}\"']*$)|(\[[^\]\"']*$)|(\([^)\"']*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
+    </indentation>
+
+    <comments>
+        <single>
+            <expression>//</expression>
+        </single>
+        <multiline>
+            <starts-with>
+                <expression>/*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>*/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
+        <pair open="&quot;" close="&quot;" />
+        <pair open="`" close="`" />
+        <pair open="“" close="”" />
+        <pair open="‘" close="’" />
+    </surrounding-pairs>
+
+    <scopes>
+        <include syntax="self" collection="query" />
+        <include syntax="self" collection="value" />
+        <include syntax="self" collection="pair" />
+
+<!--         <include syntax="self" collection="keyword" /> -->
+<!--         <include syntax="self" collection="comparison" /> -->
+<!--         <include syntax="self" collection="operator" /> -->
+<!--         <include syntax="self" collection="pipe" /> -->
+<!--         <include syntax="self" collection="logical" /> -->
+        <include syntax="self" collection="reference" />
+        <include syntax="self" collection="array" />
+<!--         <include syntax="self" collection="range" /> -->
+<!--         <include syntax="self" collection="spread" /> -->
+        <include syntax="self" collection="comments" />
+        <include syntax="self" collection="number" />
+
+    </scopes>
+
+    <collections>
+
+        <!-- !Query -->
+        <collection name="query">
+            <include syntax="self" collection="nullary-access-operator" />
+            <include syntax="self" collection="arraylike" />
+            <include syntax="self" collection="pipe" />
+<!--             <include syntax="self" collection="sort-order" /> -->
+            <include syntax="self" collection="filter" />
+        </collection>
+
+        <!-- !Variable -->
+        <collection name="variable">
+            <scope name="groq.variable.other">
+                <expression>\$[_A-Za-z][_0-9A-Za-z]*</expression>
+            </scope>
+        </collection>
+
+        <!-- !Keyword -->
+        <collection name="keyword">
+            <scope name="groq.keyword.other">
+                <expression>\b(asc|desc|in|match)\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Comparison -->
+        <collection name="comparison">
+            <scope name="groq.keyword.operator.comparison">
+                <expression>(==|!=|&gt;=|&lt;=|(?&lt;!=)&gt;|&lt;)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Operator -->
+        <collection name="operator">
+            <scope name="groq.keyword.operator.arithmetic">
+                <expression>(\+|-|\*{1,2}|/|%)</expression>
+            </scope>
+        </collection>
+
+        <!-- !Pipe -->
+        <collection name="pipe">
+            <scope name="groq.keyword.operator.pipe">
+                <expression>\|</expression>
+            </scope>
+        </collection>
+
+        <!-- !Logical -->
+        <collection name="logical">
+            <scope name="groq.keyword.operator.logical">
+                <expression>(!|&amp;&amp;|(\|\|))</expression>
+            </scope>
+        </collection>
+
+        <!-- !Logical -->
+        <collection name="logical">
+            <scope name="groq.keyword.operator.logical">
+                <expression>(!|&amp;&amp;|(\|\|))</expression>
+            </scope>
+        </collection>
+
+        <!-- !Logical -->
+        <collection name="reference">
+            <scope name="groq.keyword.operator.reference">
+                <expression>\-&gt;</expression>
+            </scope>
+        </collection>
+
+        <!-- !Pair -->
+        <collection name="pair">
+           <scope name="groq.operator.pair.groq">
+               <expression>=&gt;</expression>
+               <subscopes>
+<!--                    <include syntax="self" collection="identifier"" /> -->
+                   <include syntax="self" collection="value" />
+                   <include syntax="self" collection="filter" />
+               </subscopes>
+           </scope>
+        </collection>
+
+        <collection name="arraylike">
+            <scope name="groq.punctuation.definition.bracket">
+                <starts-with>
+                    <expression>\[</expression>
+                    <capture number="0" name="groq.punctuation.definition.bracket.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>\](\s*\.)?</expression>
+                    <capture number="0" name="groq.punctuation.definition.bracket.end" />
+                    <capture number="1" name="groq.keyword.operator.descendant" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="range" />
+                    <include syntax="self" collection="filter" />
+                    <include syntax="self" collection="array-values" />
+                </subscopes>
+            </scope>
+        </collection>
+
+        <collection name="array">
+            <scope name="groq.meta.structure.array">
+                <starts-with>
+                    <expression>\[</expression>
+                    <capture number="0" name="groq.punctuation.definition.bracket.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>\]</expression>
+                    <capture number="0" name="groq.punctuation.definition.bracket.end" />
+                </ends-with>
+<!--                 <subscopes> -->
+                    <include syntax="self" collection="array-values" />
+<!--                 </subscopes> -->
+            </scope>
+        </collection>
+
+        <!-- !Range -->
+        <collection name="range">
+            <scope name="groq.meta.structure.range">
+                <expression>\s*(\d+)\s*(\.{2,3})\s*(\d+)\s*</expression>
+                <capture number="1" name="groq.constant.numeric" />
+                <capture number="2" name="groq.keyword.operator.range" />
+                <capture number="3" name="groq.constant.numeric" />
+            </scope>
+        </collection>
+
+        <!-- !Spread -->
+        <collection name="spread">
+            <scope name="groq.structure.spread.groq">
+                <starts-with>
+                    <expression>\.\.\.</expression>
+                    <capture number="0" name="groq.definition.spread.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>(?=.)</expression>
+                    <capture number="0" name="groq.definition.spread.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="array" />
+<!--                     <include syntax="self" collection="function-call" /> -->
+<!--                     <include syntax="self" collection="projection" /> -->
+                </subscopes>
+            </scope>
+        </collection>
+
+        <!-- !Array Values -->
+        <collection name="array-values">
+            <include syntax="self" collection="value" />
+            <include syntax="self" collection="spread" />
+<!--             <scope name="groq.invalid.illegal.expected-array-separator" />
+                <expression>,</expression>
+            </scope> -->
+<!--             <include name="groq.invalid.illegal.expected-array-separator" />
+                <expression>[^\s\]]</expression>
+            </include> -->
+        </collection>
+
+        <!-- !Fiter -->
+         <collection name="filter">
+<!--             <include syntax="self" collection="function-call" /> -->
+            <include syntax="self" collection="keyword" />
+            <include syntax="self" collection="constant" />
+<!--             <include syntax="self" collection="identifier" /> -->
+            <include syntax="self" collection="value" />
+            <include syntax="self" collection="comparison" />
+            <include syntax="self" collection="operator" />
+            <include syntax="self" collection="logical" />
+        </collection>
+
+        <!-- !Comments -->
+        <collection name="comments">
+            <scope name="groq.comment.line.double-slash" spell-check="true">
+                <symbol type="comment" />
+                <expression>(//).*$\n?</expression>
+                <capture number="1" name="punctuation.definition.comment.groq" />
+            </scope>
+        </collection>
+
+        <!-- !Nullary-Access-Operator-->
+        <collection name="nullary-access-operator">
+            <scope name="groq.constant.language">
+                <expression>[*@^]</expression>
+            </scope>
+        </collection>
+
+        <!-- !Constant-->
+        <collection name="constant">
+            <scope name="groq.constant.language">
+                <expression>\b(?:true|false|null)\b</expression>
+            </scope>
+        </collection>
+
+        <!-- !Number-->
+        <collection name="number">
+            <scope name="groq.constant.numeric">
+                <expression>(?x)        # turn on extended mode\n  -?        # an optional minus\n  (?:\n    0       # a zero\n    |       # ...or...\n    [1-9]   # a 1-9 character\n    \\d*     # followed by zero or more digits\n  )\n  (?:\n    (?:\n      \\.    # a period\n      \\d+   # followed by one or more digits\n    )?\n    (?:\n      [eE]  # an e character\n      [+-]? # followed by an option +/-\n      \\d+   # followed by one or more digits\n    )?      # make exponent optional\n  )?        # make decimal portion optional</expression>
+            </scope>
+        </collection>
+
+        <!-- !Number-->
+        <collection name="named-projection">
+<!--             <include syntax="self" collection="identifier" /> -->
+<!--             <include syntax="self" collection="objectkey" /> -->
+<!--             <include syntax="self" collection="projection" /> -->
+        </collection>
+
+        <!-- !Spread -->
+        <collection name="projection">
+            <scope name="groq.punctuation.definition.projection">
+                <starts-with>
+                    <expression>\{</expression>
+                    <capture number="0" name="groq.punctuation.definition.projection.begin" />
+                </starts-with>
+                <ends-with>
+                    <expression>\}</expression>
+                    <capture number="0" name="groq.punctuation.definition.projection.end" />
+                </ends-with>
+                <subscopes>
+<!--                     <include syntax="self" collection="identifier" /> -->
+<!--                     <include syntax="self" collection="objectkey" /> -->
+                    <include syntax="self" collection="named-projection" />
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="spread" />
+                    <include syntax="self" collection="pair" />
+                    <starts-with>
+                        <expression>:</expression>
+                        <capture number="0" name="groq.punctuation.separator.projection.key-value" />
+                    </starts-with>
+                    <ends-with>
+                        <expression>(,)|(?=\})</expression>
+                        <capture number="1" name="groq.punctuation.separator.projection.pair" />
+                    </ends-with>
+                </subscopes>
+            </scope>
+        </collection>
+
+    </collections>
+</syntax>
