@@ -14,6 +14,11 @@
   "activationEvents": ["onLanguage:groq", "onWorkspaceContains:sanity.json"],
   "entitlements": {
     "process": true,
-    "filesystem": "readonly"
-  }
+    "filesystem": "readwrite"
+  },
+  "main": "main.dist.js",
+  "activationEvents": [
+    "onLanguage:groq",
+    "onWorkspaceContains:sanity.json"
+  ],
 }
