@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="groq">
+    <meta>
+        <name>GROQ-js</name>
+        <type>script</type>
+        <preferred-file-extension>js</preferred-file-extension>
+        <parent>javascript</parent>
+    </meta>
+
+    <detectors>
+        <combo priority="0.7">
+            <extension>js</extension>
+<!--             <match-content>groq&#96;</match-content> -->
+            <match-content>\s*+(groq|(/\* groq \*/))\s*(`)</match-content>
+        </combo>
+    </detectors>
+
+    <comments>
+        <single>
+            <expression>//</expression>
+        </single>
+        <multiline>
+            <starts-with>
+                <expression>/*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>*/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
+        <pair open="&quot;" close="&quot;" />
+        <pair open="`" close="`" />
+        <pair open="“" close="”" />
+        <pair open="‘" close="’" />
+    </surrounding-pairs>
+
+    <scopes>
+        <include syntax="javascript" />
+    </scopes>
+    <template-scopes>
+        <include syntax="groq" />
+    </template-scopes>
+
+</syntax>
